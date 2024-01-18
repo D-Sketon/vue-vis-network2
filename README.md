@@ -2,12 +2,12 @@
   <h1>vue-vis-network2</h1>
   <img alt="NPM License" src="https://img.shields.io/npm/l/vue-vis-network2">
   <img alt="NPM Version" src="https://img.shields.io/npm/v/vue-vis-network2">
-  <img alt="NPM Bundle Size" src="https://img.shields.io/bundlephobia/minzip/vue-vis-network2">
 
   [CodeSandBox](https://codesandbox.io/p/devbox/vue-vis-network2-example-78hs7p?file=%2Fsrc%2FApp.vue%3A219%2C16)
 </div>
 
-Vue3 component to integrate with [Vis-Network](https://github.com/visjs/vis-network/) views
+Vue3 component to integrate with [Vis-Network](https://github.com/visjs/vis-network/) views \
+Inspired from [vue-vis-network](https://github.com/r3code/vue-vis-network/)
 
 ## Installation
 
@@ -144,3 +144,77 @@ onMounted(() => {
 }
 </style>
 ```
+
+## Events
+
+### Component Events
+By default all Vis-network events are emitted by your component. You can subscribe to a subset by passing an array in the prop `events` [Vis-network event](https://visjs.github.io/vis-network/docs/network/#Events).
+
+```html
+<body>
+  <div id="app">
+    <vue-vis-network 
+      ref="network"
+      :nodes="nodes"
+      :edges="edges"
+      :options="options"
+      :events="['selectNode', 'hoverNode']"
+      @select-node="onNodeSelected"
+      @hover-node="onNodeHovered">
+    </vue-vis-network>
+  </div>
+</body>
+```
+
+### Data Events
+
+When you pass an Array of data object, it is converted internally as a DataSet.
+An event with the DataSet object will be fired at mounted. It's name will be prepend with the prop name (Ex: `edges-mounted`, `nodes-mounted`). You could use it to interact with the DataSet.
+
+All the [Visjs DataSet event](https://visjs.github.io/vis-data/data/dataset.html#Events) will be prepened the same fashion (`items-add`, `items-remove`, `items-update`). For example, pushing a new object to the `items` prop will fire a `items-add` event with the following payload:
+```javascript
+{
+  event: 'add',
+  properties: {
+    items: [7],
+  },
+  senderId: null,
+}
+```
+
+### Advanced
+
+You can also manage your own data bindings by passing your own DataSet or DataView instead of an Array.
+
+``` javascript
+import { DataSet } from 'vue-vis-network';
+
+new Vue({
+  el: '#app',
+  data() {
+    return {
+      nodes: new DataSet([
+        {id: 1,  label: 'circle',  shape: 'circle' },
+        {id: 2,  label: 'ellipse', shape: 'ellipse'},
+        {id: 3,  label: 'database',shape: 'database'}
+      ]),
+      edges: new DataSet([
+        {from: 1, to: 2},
+        {from: 1, to: 3}
+      ]),
+      options: {
+        nodes: {
+          borderWidth: 4
+         }
+      }
+    }
+  },
+});
+```
+
+## Vis-network documentation
+
+For the full reference see: 
+* [Network](https://visjs.github.io/vis-network/docs/network/)
+* [DataSet](https://visjs.github.io/vis-data/data/dataset.html)
+* [DataView](https://visjs.github.io/vis-data/data/dataview.html)
