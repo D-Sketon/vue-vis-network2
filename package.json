@@ -1,0 +1,23 @@
+{
+  "name": "vue-vis-network2",
+  "version": "0.0.1",
+  "main": "dist/vue-vis-network2.js",
+  "module": "dist/vue-vis-network2.mjs",
+  "browser": "dist/vue-vis-network2.umd.cjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vis-data": "^7.1.9",
+    "vis-network": "^9.1.9"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "@vitejs/plugin-vue": "^4.5.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vite-plugin-dts": "^3.7.1",
+    "vue": "^3.3.11"
+  }
+}
