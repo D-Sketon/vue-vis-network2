@@ -1,6 +1,7 @@
 {
   "name": "vue-vis-network2",
   "version": "0.0.1",
+  "description": "Vue 3 integration with https://github.com/visjs/vis-network/",
   "main": "dist/vue-vis-network2.js",
   "module": "dist/vue-vis-network2.mjs",
   "browser": "dist/vue-vis-network2.umd.cjs",
@@ -8,6 +9,8 @@
   "scripts": {
     "build": "vite build"
   },
+  "author": "D-Sketon",
+  "license": "MIT",
   "dependencies": {
     "vis-data": "^7.1.9",
     "vis-network": "^9.1.9"
@@ -19,5 +22,13 @@
     "vite": "^5.0.8",
     "vite-plugin-dts": "^3.7.1",
     "vue": "^3.3.11"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/D-Sketon/vue-vis-network2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/D-Sketon/vue-vis-network2/issues"
+  },
+  "homepage": "https://github.com/D-Sketon/vue-vis-network2#readme"
 }
