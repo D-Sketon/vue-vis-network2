@@ -28,6 +28,7 @@ export default defineConfig({
     rollupOptions: {
       external: ["vue", "vis-network", "vis-data"],
       output: {
+        exports: "named",
         globals: {
           vue: "Vue",
           "vis-network": "vis",

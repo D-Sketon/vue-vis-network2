@@ -1,5 +1,51 @@
-import { AddEventPayload, Id, RemoveEventPayload, UpdateEventPayload } from "vis-data/declarations/data-interface";
 import { Edge, Node } from "vis-network";
+/** Nullable id type. */
+export type OptId = undefined | null | Id;
+/**
+ * An item that may ({@link Id}) or may not (absent, undefined or null) have an id property.
+ * @typeParam IdProp - Name of the property that contains the id.
+ */
+export type PartItem<IdProp extends string> = Partial<Record<IdProp, OptId>>;
+/**
+ * An item that has a property containing an id and all other required properties of given item type.
+ * @typeParam Item - Item type that may or may not have an id.
+ * @typeParam IdProp - Name of the property that contains the id.
+ */
+export type FullItem<Item extends PartItem<IdProp>, IdProp extends string> = Item &
+  Record<IdProp, Id>;
+
+/** Valid id type. */
+export type Id = number | string;
+/** Add event payload. */
+export interface AddEventPayload {
+  /** Ids of added items. */
+  items: Id[];
+}
+/** Remove event payload. */
+export interface RemoveEventPayload<
+  Item extends PartItem<IdProp>,
+  IdProp extends string
+> {
+  /** Ids of removed items. */
+  items: Id[];
+  /** Items as they were before their removal. */
+  oldData: FullItem<Item, IdProp>[];
+}
+/** Update event payload. */
+export interface UpdateEventPayload<
+  Item extends PartItem<IdProp>,
+  IdProp extends string
+> {
+  /** Ids of updated items. */
+  items: Id[];
+  /** Items as they were before this update. */
+  oldData: FullItem<Item, IdProp>[];
+  /**
+   * Items as they are now.
+   * @deprecated Just get the data from the data set or data view.
+   */
+  data: FullItem<Item, IdProp>[];
+}
 
 export enum EventKey {
   CLICK = "click",
@@ -110,7 +156,8 @@ export const VueNetworkEvents = {
   [EventKey.DRAG_START]: (_param: NetworkBaseEvent) => true,
   [EventKey.DRAGGING]: (_param: NetworkBaseEvent) => true,
   [EventKey.DRAG_END]: (_param: NetworkBaseEvent) => true,
-  [EventKey.CONTROL_NODE_DRAGGING]: (_param: NetworkControlNodeDraggingEvent) => true,
+  [EventKey.CONTROL_NODE_DRAGGING]: (_param: NetworkControlNodeDraggingEvent) =>
+    true,
   [EventKey.CONTROL_NODE_DRAG_END]: (_param: NetworkBaseEvent) => true,
   [EventKey.HOVER_NODE]: (_param: NetworkNodeEvent) => true,
   [EventKey.BLUR_NODE]: (_param: NetworkNodeEvent) => true,
@@ -120,7 +167,9 @@ export const VueNetworkEvents = {
   [EventKey.SHOW_POPUP]: (_param: number) => true,
   [EventKey.HIDE_POPUP]: (_param: void) => true,
   [EventKey.START_STABILIZING]: (_param: void) => true,
-  [EventKey.STABILIZATION_PROGRESS]: (_param: NetworkStabilizationProgressEvent) => true,
+  [EventKey.STABILIZATION_PROGRESS]: (
+    _param: NetworkStabilizationProgressEvent
+  ) => true,
   [EventKey.STABILIZATION_ITERATIONS_DONE]: (_param: void) => true,
   [EventKey.STABILIZED]: (_param: NetworkStabilizedEvent) => true,
   [EventKey.RESIZE]: (_param: NetworkResizeEvent) => true,
@@ -131,10 +180,34 @@ export const VueNetworkEvents = {
   [EventKey.CONFIG_CHANGE]: (_param: any) => true,
   "edges-mounted": () => true,
   "nodes-mounted": () => true,
-  "edges-add": (_name: "add", _payload: AddEventPayload | null, _senderId?: Id | null) => true,
-  "edges-update": (_name: "update", _payload: UpdateEventPayload<Edge, "id"> | null, _senderId?: Id | null) => true,
-  "edges-remove": (_name: "remove", _payload: RemoveEventPayload<Edge, "id"> | null, _senderId?: Id | null) => true,
-  "nodes-add": (_name: "add", _payload: AddEventPayload | null, _senderId?: Id | null) => true,
-  "nodes-update": (_name: "update", _payload: UpdateEventPayload<Node, "id"> | null, _senderId?: Id | null) => true,
-  "nodes-remove": (_name: "remove", _payload: RemoveEventPayload<Node, "id"> | null, _senderId?: Id | null) => true,
+  "edges-add": (
+    _name: "add",
+    _payload: AddEventPayload | null,
+    _senderId?: Id | null
+  ) => true,
+  "edges-update": (
+    _name: "update",
+    _payload: UpdateEventPayload<Edge, "id"> | null,
+    _senderId?: Id | null
+  ) => true,
+  "edges-remove": (
+    _name: "remove",
+    _payload: RemoveEventPayload<Edge, "id"> | null,
+    _senderId?: Id | null
+  ) => true,
+  "nodes-add": (
+    _name: "add",
+    _payload: AddEventPayload | null,
+    _senderId?: Id | null
+  ) => true,
+  "nodes-update": (
+    _name: "update",
+    _payload: UpdateEventPayload<Node, "id"> | null,
+    _senderId?: Id | null
+  ) => true,
+  "nodes-remove": (
+    _name: "remove",
+    _payload: RemoveEventPayload<Node, "id"> | null,
+    _senderId?: Id | null
+  ) => true,
 };

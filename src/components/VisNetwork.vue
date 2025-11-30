@@ -5,6 +5,7 @@ import {
   ref,
   shallowRef,
   watch,
+  StyleValue,
 } from "vue";
 import {
   Network,
@@ -22,11 +23,14 @@ const props = withDefaults(defineProps<{
   edges?: Edge[] | DataSet<Edge> | DataView<Edge>;
   options?: Options;
   events?: EventKey[];
+  style?: StyleValue;
+  class?: any;
 }>(), {
   nodes: () => [] as Node[],
   edges: () => [] as Edge[],
   options: () => ({}),
   events: () => Object.values(EventKey),
+  style: () => ({}),
 });
 
 const emit = defineEmits(VueNetworkEvents);
@@ -42,12 +46,12 @@ const visData = ref<{
 
 const network = ref<Network>();
 
-const getNode = (id: IdType) => {
-  return visData.value.nodes?.get(id);
+const getNode = (id: IdType): Node | null => {
+  return (visData.value.nodes?.get(id) as Node) || null;
 };
 
-const getEdge = (id: IdType) => {
-  return visData.value.edges?.get(id);
+const getEdge = (id: IdType): Edge | null => {
+  return (visData.value.edges?.get(id) as Edge) || null;
 };
 
 watch(
@@ -132,5 +136,9 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="visualizationRef"></div>
+  <div
+    ref="visualizationRef"
+    :class="props.class"
+    :style="props.style"
+  ></div>
 </template>
