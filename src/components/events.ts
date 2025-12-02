@@ -11,8 +11,10 @@ export type PartItem<IdProp extends string> = Partial<Record<IdProp, OptId>>;
  * @typeParam Item - Item type that may or may not have an id.
  * @typeParam IdProp - Name of the property that contains the id.
  */
-export type FullItem<Item extends PartItem<IdProp>, IdProp extends string> = Item &
-  Record<IdProp, Id>;
+export type FullItem<
+  Item extends PartItem<IdProp>,
+  IdProp extends string
+> = Item & Record<IdProp, Id>;
 
 /** Valid id type. */
 export type Id = number | string;
@@ -82,9 +84,12 @@ export enum EventKey {
   CONFIG_CHANGE = "configChange",
 }
 
-export interface NetworkBaseEvent {
-  nodes: string[];
-  edges: string[];
+export interface NetworkBaseEvent<
+  NodeId extends Id = string,
+  EdgeId extends Id = string
+> {
+  nodes: NodeId[];
+  edges: EdgeId[];
   event: Event;
   pointer: {
     DOM: { x: number; y: number };
@@ -92,33 +97,50 @@ export interface NetworkBaseEvent {
   };
 }
 
-export type NetworkClickEvent = NetworkBaseEvent & {
-  items:
-    | { nodeId: string; labelId?: number }[]
-    | { edgeId: string; labelId?: number }[];
+export type NetworkClickEvent<
+  NodeId extends Id = string,
+  EdgeId extends Id = string
+> = NetworkBaseEvent<NodeId, EdgeId> & {
+  items: { nodeId: NodeId; labelId?: 0 }[] | { edgeId: EdgeId; labelId?: 0 }[];
 };
 
-export type NetworkDeselectEvent = NetworkBaseEvent & {
+export type NetworkDeselectEvent<
+  NodeId extends Id = string,
+  EdgeId extends Id = string
+> = NetworkBaseEvent<NodeId, EdgeId> & {
   previousSelection: {
     nodes: any[];
     edges: any[];
   };
 };
 
-export type NetworkControlNodeDraggingEvent = NetworkBaseEvent & {
-  controlEdge: { from: string; to: string };
+export type NetworkControlNodeDraggingEvent<
+  NodeId extends Id = string,
+  EdgeId extends Id = string
+> = NetworkBaseEvent<NodeId, EdgeId> & {
+  controlEdge: { from: EdgeId | undefined; to: EdgeId | undefined };
 };
 
-export type NetworkNodeEvent = {
-  node: string;
+export type NetworkNodeEvent<NodeId extends Id = string> = {
+  node: NodeId;
+  event: Event;
+  pointer: {
+    DOM: { x: number; y: number };
+    canvas: { x: number; y: number };
+  };
 };
 
-export type NetworkEdgeEvent = {
-  edge: string;
+export type NetworkEdgeEvent<EdgeId extends Id = string> = {
+  edge: EdgeId;
+  event: Event;
+  pointer: {
+    DOM: { x: number; y: number };
+    canvas: { x: number; y: number };
+  };
 };
 
 export type NetworkZoomEvent = {
-  direction: string;
+  direction: "+" | "-";
   scale: number;
   pointer: {
     x: number;
@@ -158,13 +180,14 @@ export const VueNetworkEvents = {
   [EventKey.DRAG_END]: (_param: NetworkBaseEvent) => true,
   [EventKey.CONTROL_NODE_DRAGGING]: (_param: NetworkControlNodeDraggingEvent) =>
     true,
-  [EventKey.CONTROL_NODE_DRAG_END]: (_param: NetworkBaseEvent) => true,
+  [EventKey.CONTROL_NODE_DRAG_END]: (_param: NetworkControlNodeDraggingEvent) =>
+    true,
   [EventKey.HOVER_NODE]: (_param: NetworkNodeEvent) => true,
   [EventKey.BLUR_NODE]: (_param: NetworkNodeEvent) => true,
   [EventKey.HOVER_EDGE]: (_param: NetworkEdgeEvent) => true,
   [EventKey.BLUR_EDGE]: (_param: NetworkEdgeEvent) => true,
   [EventKey.ZOOM]: (_param: NetworkZoomEvent) => true,
-  [EventKey.SHOW_POPUP]: (_param: number) => true,
+  [EventKey.SHOW_POPUP]: (_param: Id) => true,
   [EventKey.HIDE_POPUP]: (_param: void) => true,
   [EventKey.START_STABILIZING]: (_param: void) => true,
   [EventKey.STABILIZATION_PROGRESS]: (
