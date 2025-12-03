@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="NodeId extends Id = string, EdgeId extends Id = string">
 import {
   onBeforeUnmount,
   onMounted,
@@ -16,7 +16,7 @@ import {
   Data,
 } from "vis-network";
 import { DataSet, DataView } from "vis-data";
-import { EventKey, VueNetworkEvents } from "./events";
+import { EventKey, VueNetworkEvents, Id } from "./events";
 
 const props = withDefaults(defineProps<{
   nodes?: Node[] | DataSet<Node> | DataView<Node>;
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{
   style: () => ({}),
 });
 
-const emit = defineEmits(VueNetworkEvents);
+const emit = defineEmits<VueNetworkEvents<NodeId, EdgeId>>();
 
 const visualizationRef = shallowRef<HTMLDivElement | null>(null);
 const visData = ref<{
@@ -100,7 +100,7 @@ function mountVisData(propName: "nodes" | "edges") {
   // Emitting DataSets back
   emit(`${propName}-mounted` as any, data);
 
-  return data as DataSet<Node | Edge>;
+  return data as DataSet<Node> | DataSet<Edge>;
 }
 
 onMounted(() => {
@@ -136,9 +136,5 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    ref="visualizationRef"
-    :class="props.class"
-    :style="props.style"
-  ></div>
+  <div ref="visualizationRef" :class="props.class" :style="props.style"></div>
 </template>

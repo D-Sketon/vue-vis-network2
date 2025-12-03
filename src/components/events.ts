@@ -1,4 +1,4 @@
-import { Edge, Node } from "vis-network";
+import { DataSet, Edge, Node } from "vis-network";
 /** Nullable id type. */
 export type OptId = undefined | null | Id;
 /**
@@ -84,10 +84,7 @@ export enum EventKey {
   CONFIG_CHANGE = "configChange",
 }
 
-export interface NetworkBaseEvent<
-  NodeId extends Id = string,
-  EdgeId extends Id = string
-> {
+export interface NetworkBaseEvent<NodeId extends Id, EdgeId extends Id> {
   nodes: NodeId[];
   edges: EdgeId[];
   event: Event;
@@ -98,15 +95,15 @@ export interface NetworkBaseEvent<
 }
 
 export type NetworkClickEvent<
-  NodeId extends Id = string,
-  EdgeId extends Id = string
+  NodeId extends Id,
+  EdgeId extends Id
 > = NetworkBaseEvent<NodeId, EdgeId> & {
   items: { nodeId: NodeId; labelId?: 0 }[] | { edgeId: EdgeId; labelId?: 0 }[];
 };
 
 export type NetworkDeselectEvent<
-  NodeId extends Id = string,
-  EdgeId extends Id = string
+  NodeId extends Id,
+  EdgeId extends Id
 > = NetworkBaseEvent<NodeId, EdgeId> & {
   previousSelection: {
     nodes: any[];
@@ -115,13 +112,13 @@ export type NetworkDeselectEvent<
 };
 
 export type NetworkControlNodeDraggingEvent<
-  NodeId extends Id = string,
-  EdgeId extends Id = string
+  NodeId extends Id,
+  EdgeId extends Id
 > = NetworkBaseEvent<NodeId, EdgeId> & {
   controlEdge: { from: EdgeId | undefined; to: EdgeId | undefined };
 };
 
-export type NetworkNodeEvent<NodeId extends Id = string> = {
+export type NetworkNodeEvent<NodeId extends Id> = {
   node: NodeId;
   event: Event;
   pointer: {
@@ -130,7 +127,7 @@ export type NetworkNodeEvent<NodeId extends Id = string> = {
   };
 };
 
-export type NetworkEdgeEvent<EdgeId extends Id = string> = {
+export type NetworkEdgeEvent<EdgeId extends Id> = {
   edge: EdgeId;
   event: Event;
   pointer: {
@@ -164,73 +161,45 @@ export type NetworkResizeEvent = {
   oldHeight: number;
 };
 
-export const VueNetworkEvents = {
-  [EventKey.CLICK]: (_param: NetworkClickEvent) => true,
-  [EventKey.DOUBLE_CLICK]: (_param: NetworkBaseEvent) => true,
-  [EventKey.ON_CONTEXT]: (_param: NetworkBaseEvent) => true,
-  [EventKey.HOLD]: (_param: NetworkBaseEvent) => true,
-  [EventKey.RELEASE]: (_param: NetworkBaseEvent) => true,
-  [EventKey.SELECT]: (_param: NetworkBaseEvent) => true,
-  [EventKey.SELECT_NODE]: (_param: NetworkBaseEvent) => true,
-  [EventKey.SELECT_EDGE]: (_param: NetworkBaseEvent) => true,
-  [EventKey.DESELECT_NODE]: (_param: NetworkDeselectEvent) => true,
-  [EventKey.DESELECT_EDGE]: (_param: NetworkDeselectEvent) => true,
-  [EventKey.DRAG_START]: (_param: NetworkBaseEvent) => true,
-  [EventKey.DRAGGING]: (_param: NetworkBaseEvent) => true,
-  [EventKey.DRAG_END]: (_param: NetworkBaseEvent) => true,
-  [EventKey.CONTROL_NODE_DRAGGING]: (_param: NetworkControlNodeDraggingEvent) =>
-    true,
-  [EventKey.CONTROL_NODE_DRAG_END]: (_param: NetworkControlNodeDraggingEvent) =>
-    true,
-  [EventKey.HOVER_NODE]: (_param: NetworkNodeEvent) => true,
-  [EventKey.BLUR_NODE]: (_param: NetworkNodeEvent) => true,
-  [EventKey.HOVER_EDGE]: (_param: NetworkEdgeEvent) => true,
-  [EventKey.BLUR_EDGE]: (_param: NetworkEdgeEvent) => true,
-  [EventKey.ZOOM]: (_param: NetworkZoomEvent) => true,
-  [EventKey.SHOW_POPUP]: (_param: Id) => true,
-  [EventKey.HIDE_POPUP]: (_param: void) => true,
-  [EventKey.START_STABILIZING]: (_param: void) => true,
-  [EventKey.STABILIZATION_PROGRESS]: (
-    _param: NetworkStabilizationProgressEvent
-  ) => true,
-  [EventKey.STABILIZATION_ITERATIONS_DONE]: (_param: void) => true,
-  [EventKey.STABILIZED]: (_param: NetworkStabilizedEvent) => true,
-  [EventKey.RESIZE]: (_param: NetworkResizeEvent) => true,
-  [EventKey.INIT_REDRAW]: (_param: void) => true,
-  [EventKey.BEFORE_DRAWING]: (_param: CanvasRenderingContext2D) => true,
-  [EventKey.AFTER_DRAWING]: (_param: CanvasRenderingContext2D) => true,
-  [EventKey.ANIMATION_FINISHED]: (_param: void) => true,
-  [EventKey.CONFIG_CHANGE]: (_param: any) => true,
-  "edges-mounted": () => true,
-  "nodes-mounted": () => true,
-  "edges-add": (
-    _name: "add",
-    _payload: AddEventPayload | null,
-    _senderId?: Id | null
-  ) => true,
-  "edges-update": (
-    _name: "update",
-    _payload: UpdateEventPayload<Edge, "id"> | null,
-    _senderId?: Id | null
-  ) => true,
-  "edges-remove": (
-    _name: "remove",
-    _payload: RemoveEventPayload<Edge, "id"> | null,
-    _senderId?: Id | null
-  ) => true,
-  "nodes-add": (
-    _name: "add",
-    _payload: AddEventPayload | null,
-    _senderId?: Id | null
-  ) => true,
-  "nodes-update": (
-    _name: "update",
-    _payload: UpdateEventPayload<Node, "id"> | null,
-    _senderId?: Id | null
-  ) => true,
-  "nodes-remove": (
-    _name: "remove",
-    _payload: RemoveEventPayload<Node, "id"> | null,
-    _senderId?: Id | null
-  ) => true,
-};
+export type VueNetworkEvents<NodeId extends Id, EdgeId extends Id> = {
+  (e: 'click', params: NetworkClickEvent<NodeId, EdgeId>): void;
+  (e: 'doubleClick', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'oncontext', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'hold', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'release', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'select', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'selectNode', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'selectEdge', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'deselectNode', params: NetworkDeselectEvent<NodeId, EdgeId>): void;
+  (e: 'deselectEdge', params: NetworkDeselectEvent<NodeId, EdgeId>): void;
+  (e: 'dragStart', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'dragging', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'dragEnd', params: NetworkBaseEvent<NodeId, EdgeId>): void;
+  (e: 'controlNodeDragging', params: NetworkControlNodeDraggingEvent<NodeId, EdgeId>): void;
+  (e: 'controlNodeDragEnd', params: NetworkControlNodeDraggingEvent<NodeId, EdgeId>): void;
+  (e: 'hoverNode', params: NetworkNodeEvent<NodeId>): void;
+  (e: 'blurNode', params: NetworkNodeEvent<NodeId>): void;
+  (e: 'hoverEdge', params: NetworkEdgeEvent<EdgeId>): void;
+  (e: 'blurEdge', params: NetworkEdgeEvent<EdgeId>): void;
+  (e: 'zoom', params: NetworkZoomEvent): void;
+  (e: 'showPopup', params: Id): void;
+  (e: 'hidePopup'): void;
+  (e: 'startStabilizing'): void;
+  (e: 'stabilizationProgress', params: NetworkStabilizationProgressEvent): void;
+  (e: 'stabilizationIterationsDone'): void;
+  (e: 'stabilized', params: NetworkStabilizedEvent): void;
+  (e: 'resize', params: NetworkResizeEvent): void;
+  (e: 'initRedraw'): void;
+  (e: 'beforeDrawing', params: CanvasRenderingContext2D): void;
+  (e: 'afterDrawing', params: CanvasRenderingContext2D): void;
+  (e: 'animationFinished'): void;
+  (e: 'configChange', params: any): void;
+  (e: 'edges-mounted', params: DataSet<Edge>): void;
+  (e: 'nodes-mounted', params: DataSet<Node>): void;
+  (e: 'edges-add', params: AddEventPayload | null, senderId?: Id | null): void;
+  (e: 'edges-update', params: UpdateEventPayload<Edge, "id"> | null, senderId?: Id | null): void;
+  (e: 'edges-remove', params: RemoveEventPayload<Edge, "id"> | null, senderId?: Id | null): void;
+  (e: 'nodes-add', params: AddEventPayload | null, senderId?: Id | null): void;
+  (e: 'nodes-update', params: UpdateEventPayload<Node, "id"> | null, senderId?: Id | null): void;
+  (e: 'nodes-remove', params: RemoveEventPayload<Node, "id"> | null, senderId?: Id | null): void;
+}
