@@ -16,7 +16,23 @@ import {
   Data,
 } from "vis-network";
 import { DataSet, DataView } from "vis-data";
-import { EventKey, VueNetworkEvents, Id } from "./events";
+import {
+  EventKey,
+  Id,
+  NetworkClickEvent,
+  NetworkBaseEvent,
+  NetworkDeselectEvent,
+  NetworkControlNodeDraggingEvent,
+  NetworkNodeEvent,
+  NetworkEdgeEvent,
+  NetworkZoomEvent,
+  NetworkStabilizationProgressEvent,
+  NetworkStabilizedEvent,
+  NetworkResizeEvent,
+  AddEventPayload,
+  UpdateEventPayload,
+  RemoveEventPayload,
+} from "./events";
 
 const props = withDefaults(defineProps<{
   nodes?: Node[] | DataSet<Node> | DataView<Node>;
@@ -33,7 +49,48 @@ const props = withDefaults(defineProps<{
   style: () => ({}),
 });
 
-const emit = defineEmits<VueNetworkEvents<NodeId, EdgeId>>();
+const emit = defineEmits<{
+  click: [params: NetworkClickEvent<NodeId, EdgeId>];
+  doubleClick: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  oncontext: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  hold: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  release: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  select: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  selectNode: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  selectEdge: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  deselectNode: [params: NetworkDeselectEvent<NodeId, EdgeId>];
+  deselectEdge: [params: NetworkDeselectEvent<NodeId, EdgeId>];
+  dragStart: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  dragging: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  dragEnd: [params: NetworkBaseEvent<NodeId, EdgeId>];
+  controlNodeDragging: [params: NetworkControlNodeDraggingEvent<NodeId, EdgeId>];
+  controlNodeDragEnd: [params: NetworkControlNodeDraggingEvent<NodeId, EdgeId>];
+  hoverNode: [params: NetworkNodeEvent<NodeId>];
+  blurNode: [params: NetworkNodeEvent<NodeId>];
+  hoverEdge: [params: NetworkEdgeEvent<EdgeId>];
+  blurEdge: [params: NetworkEdgeEvent<EdgeId>];
+  zoom: [params: NetworkZoomEvent];
+  showPopup: [params: Id];
+  hidePopup: [];
+  startStabilizing: [];
+  stabilizationProgress: [params: NetworkStabilizationProgressEvent];
+  stabilizationIterationsDone: [];
+  stabilized: [params: NetworkStabilizedEvent];
+  resize: [params: NetworkResizeEvent];
+  initRedraw: [];
+  beforeDrawing: [params: CanvasRenderingContext2D];
+  afterDrawing: [params: CanvasRenderingContext2D];
+  animationFinished: [];
+  configChange: [params: any];
+  "edges-mounted": [params: DataSet<Edge>];
+  "nodes-mounted": [params: DataSet<Node>];
+  "edges-add": [params: AddEventPayload | null, senderId?: Id | null];
+  "edges-update": [params: UpdateEventPayload<Edge, "id"> | null, senderId?: Id | null];
+  "edges-remove": [params: RemoveEventPayload<Edge, "id"> | null, senderId?: Id | null];
+  "nodes-add": [params: AddEventPayload | null, senderId?: Id | null];
+  "nodes-update": [params: UpdateEventPayload<Node, "id"> | null, senderId?: Id | null];
+  "nodes-remove": [params: RemoveEventPayload<Node, "id"> | null, senderId?: Id | null];
+}>();
 
 const visualizationRef = shallowRef<HTMLDivElement | null>(null);
 const visData = ref<{

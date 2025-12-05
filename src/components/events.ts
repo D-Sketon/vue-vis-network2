@@ -1,4 +1,3 @@
-import { DataSet, Edge, Node } from "vis-network";
 /** Nullable id type. */
 export type OptId = undefined | null | Id;
 /**
@@ -160,46 +159,3 @@ export type NetworkResizeEvent = {
   oldWidth: number;
   oldHeight: number;
 };
-
-export type VueNetworkEvents<NodeId extends Id, EdgeId extends Id> = {
-  (e: 'click', params: NetworkClickEvent<NodeId, EdgeId>): void;
-  (e: 'doubleClick', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'oncontext', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'hold', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'release', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'select', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'selectNode', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'selectEdge', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'deselectNode', params: NetworkDeselectEvent<NodeId, EdgeId>): void;
-  (e: 'deselectEdge', params: NetworkDeselectEvent<NodeId, EdgeId>): void;
-  (e: 'dragStart', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'dragging', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'dragEnd', params: NetworkBaseEvent<NodeId, EdgeId>): void;
-  (e: 'controlNodeDragging', params: NetworkControlNodeDraggingEvent<NodeId, EdgeId>): void;
-  (e: 'controlNodeDragEnd', params: NetworkControlNodeDraggingEvent<NodeId, EdgeId>): void;
-  (e: 'hoverNode', params: NetworkNodeEvent<NodeId>): void;
-  (e: 'blurNode', params: NetworkNodeEvent<NodeId>): void;
-  (e: 'hoverEdge', params: NetworkEdgeEvent<EdgeId>): void;
-  (e: 'blurEdge', params: NetworkEdgeEvent<EdgeId>): void;
-  (e: 'zoom', params: NetworkZoomEvent): void;
-  (e: 'showPopup', params: Id): void;
-  (e: 'hidePopup'): void;
-  (e: 'startStabilizing'): void;
-  (e: 'stabilizationProgress', params: NetworkStabilizationProgressEvent): void;
-  (e: 'stabilizationIterationsDone'): void;
-  (e: 'stabilized', params: NetworkStabilizedEvent): void;
-  (e: 'resize', params: NetworkResizeEvent): void;
-  (e: 'initRedraw'): void;
-  (e: 'beforeDrawing', params: CanvasRenderingContext2D): void;
-  (e: 'afterDrawing', params: CanvasRenderingContext2D): void;
-  (e: 'animationFinished'): void;
-  (e: 'configChange', params: any): void;
-  (e: 'edges-mounted', params: DataSet<Edge>): void;
-  (e: 'nodes-mounted', params: DataSet<Node>): void;
-  (e: 'edges-add', params: AddEventPayload | null, senderId?: Id | null): void;
-  (e: 'edges-update', params: UpdateEventPayload<Edge, "id"> | null, senderId?: Id | null): void;
-  (e: 'edges-remove', params: RemoveEventPayload<Edge, "id"> | null, senderId?: Id | null): void;
-  (e: 'nodes-add', params: AddEventPayload | null, senderId?: Id | null): void;
-  (e: 'nodes-update', params: UpdateEventPayload<Node, "id"> | null, senderId?: Id | null): void;
-  (e: 'nodes-remove', params: RemoveEventPayload<Node, "id"> | null, senderId?: Id | null): void;
-}
