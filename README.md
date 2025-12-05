@@ -6,8 +6,16 @@
   [CodeSandBox](https://codesandbox.io/p/devbox/vue-vis-network2-example-78hs7p?file=%2Fsrc%2FApp.vue%3A219%2C16)
 </div>
 
-Vue3 component to integrate with [Vis-Network](https://github.com/visjs/vis-network/) views \
-Inspired from [vue-vis-network](https://github.com/r3code/vue-vis-network/)
+Vue 3 component to integrate with [Vis-Network](https://github.com/visjs/vis-network/) views  
+Inspired by [vue-vis-network](https://github.com/r3code/vue-vis-network/)
+
+## Features
+
+- **Vue 3 & TypeScript** - Full type safety with Composition API and `<script setup>` syntax
+- **Flexible Data Binding** - Support for Array, DataSet, and DataView with reactive updates
+- **Generic Support** - Type-safe custom node/edge ID types
+- **Complete Event System** - All Vis-network events with proper type inference
+- **Exposed API** - Direct access to network instance and data methods
 
 ## Installation
 
@@ -15,206 +23,252 @@ Inspired from [vue-vis-network](https://github.com/r3code/vue-vis-network/)
 npm install vue-vis-network2
 ```
 
-## Usage
+## Quick Start
 
-```html
+### Basic Example
+
+```vue
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { VueVisNetwork } from "vue-vis-network2";
-import { Edge, Node, Options } from "vis-network";
+import { ref } from 'vue';
+import { VueVisNetwork, type Node, type Edge, type Options } from 'vue-vis-network2';
 
-const defNodes: Node[] = [
-  { id: 1, label: "Node 1" },
-  { id: 2, label: "Node 2" },
-  { id: 3, label: "Node 3" },
-  { id: 4, label: "Node 4" },
-  { id: 5, label: "Node 5" },
-];
-const defEdges: Edge[] = [
-  { id: 1, from: 1, to: 3 },
-  { id: 2, from: 1, to: 2 },
-  { id: 3, from: 2, to: 4 },
-  { id: 4, from: 2, to: 5 },
-  { id: 5, from: 3, to: 3 },
-];
+const nodes = ref<Node[]>([
+  { id: 1, label: 'Node 1' },
+  { id: 2, label: 'Node 2' },
+  { id: 3, label: 'Node 3' },
+  { id: 4, label: 'Node 4' },
+  { id: 5, label: 'Node 5' },
+]);
 
-const network = ref<{
-  nodes: Node[];
-  edges: Edge[];
-  options: Options;
-}>({
-  nodes: [...defNodes],
-  edges: [...defEdges],
-  options: {
-    nodes: {
-      shape: "circle",
-      size: 24,
-      color: {
-        border: "grey",
-        highlight: {
-          border: "black",
-          background: "white",
-        },
-        hover: {
-          border: "orange",
-          background: "grey",
-        },
-      },
-      font: { color: "black" },
-      shapeProperties: {
-        useBorderWithImage: true,
-      },
-    },
+const edges = ref<Edge[]>([
+  { from: 1, to: 3 },
+  { from: 1, to: 2 },
+  { from: 2, to: 4 },
+  { from: 2, to: 5 },
+]);
+
+const options = ref<Options>({
+  nodes: {
+    shape: 'dot',
+    size: 16,
   },
-});
-
-const networkEvent = (...args: any[]) => {
-  console.log(args);
-};
-
-const networkRef = ref();
-
-onMounted(() => {
-  const network = networkRef.value.network;
-  // if you want access to vis.js network api
-  console.log(network);
-  // getNode(id) to get node
-  console.log("getNode-1: ", networkRef.value.getNode(1));
-  // getEdge(id) to get edge
-  console.log("getEdge-1: ", networkRef.value.getEdge(1));
+  edges: {
+    smooth: false,
+  },
 });
 </script>
 
 <template>
-  <div>
-    <vue-vis-network
-      ref="networkRef"
-      class="network"
-      :nodes="network.nodes"
-      :edges="network.edges"
-      :options="network.options"
-      @click="networkEvent('click',$event)"
-      @double-click="networkEvent('doubleClick',$event)"
-      @oncontext="networkEvent('oncontext',$event)"
-      @hold="networkEvent('hold',$event)"
-      @release="networkEvent('release',$event)"
-      @select="networkEvent('select',$event)"
-      @select-node="networkEvent('selectNode',$event)"
-      @select-edge="networkEvent('selectEdge',$event)"
-      @deselect-node="networkEvent('deselectNode',$event)"
-      @deselect-edge="networkEvent('deselectEdge',$event)"
-      @drag-start="networkEvent('dragStart',$event)"
-      @dragging="networkEvent('dragging',$event)"
-      @drag-end="networkEvent('dragEnd',$event)"
-      @hover-node="networkEvent('hoverNode',$event)"
-      @blur-node="networkEvent('blurNode',$event)"
-      @hover-edge="networkEvent('hoverEdge',$event)"
-      @blur-edge="networkEvent('blurEdge',$event)"
-      @zoom="networkEvent('zoom',$event)"
-      @show-popup="networkEvent('showPopup',$event)"
-      @hide-popup="networkEvent('hidePopup',$event)"
-      @start-stabilizing="networkEvent('startStabilizing',$event)"
-      @stabilization-progress="networkEvent('stabilizationProgress',$event)"
-      @stabilization-iterations-done="networkEvent('stabilizationIterationsDone',$event)"
-      @stabilized="networkEvent('stabilized',$event)"
-      @resize="networkEvent('resize',$event)"
-      @init-redraw="networkEvent('initRedraw',$event)"
-      @before-drawing="networkEvent('beforeDrawing', $event)"
-      @after-drawing="networkEvent('afterDrawing',$event)"
-      @animation-finished="networkEvent('animationFinished',$event)"
-      @config-change="networkEvent('configChange',$event)"
-      @nodes-mounted="networkEvent('nodes-mounted',$event)"
-      @nodes-add="networkEvent('nodes-add',$event)"
-      @nodes-update="networkEvent('nodes-update',$event)"
-      @nodes-remove="networkEvent('nodes-remove',$event)"
-      @edges-mounted="networkEvent('edges-mounted',$event)"
-      @edges-add="networkEvent('edges-add',$event)"
-      @edges-update="networkEvent('edges-update',$event)"
-      @edges-remove="networkEvent('edges-remove',$event)"
-    >
-    </vue-vis-network>
-  </div>
+  <vue-vis-network
+    :nodes="nodes"
+    :edges="edges"
+    :options="options"
+    style="height: 400px"
+  />
 </template>
+```
 
-<style>
-.network {
-  height: 400px;
-  border: 1px solid #ccc;
-  margin: 5px 0;
-}
-</style>
+### With Events and Methods
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { VueVisNetwork, type Node, type Edge, type Options } from 'vue-vis-network2';
+
+const nodes = ref<Node[]>([
+  { id: 1, label: 'Node 1' },
+  { id: 2, label: 'Node 2' },
+  { id: 3, label: 'Node 3' },
+]);
+
+const edges = ref<Edge[]>([
+  { from: 1, to: 2 },
+  { from: 2, to: 3 },
+]);
+
+const options = ref<Options>({
+  nodes: {
+    shape: 'circle',
+    size: 24,
+    color: {
+      border: '#2B7CE9',
+      background: '#97C2FC',
+    },
+  },
+});
+
+const networkRef = ref();
+
+// Handle click events
+const handleClick = (params) => {
+  console.log('Clicked node:', params.nodes);
+  console.log('Clicked edge:', params.edges);
+};
+
+// Access network instance and methods
+onMounted(() => {
+  // Get vis-network instance
+  const network = networkRef.value.network;
+  console.log('Network instance:', network);
+  
+  // Get node data
+  const node = networkRef.value.getNode(1);
+  console.log('Node 1:', node);
+  
+  // Get edge data
+  const edge = networkRef.value.getEdge(1);
+  console.log('Edge 1:', edge);
+});
+</script>
+
+<template>
+  <vue-vis-network
+    ref="networkRef"
+    :nodes="nodes"
+    :edges="edges"
+    :options="options"
+    @click="handleClick"
+    @select-node="(params) => console.log('Selected:', params)"
+    style="height: 400px; border: 1px solid #ccc"
+  />
+</template>
+```
+
+## TypeScript Generics
+
+Use generics to specify custom node and edge ID types:
+
+```vue
+<script setup lang="ts">
+import type { NetworkClickEvent } from 'vue-vis-network2';
+
+const handleClick = (params: NetworkClickEvent<number, number>) => {
+  console.log(params.nodes); // number[]
+  console.log(params.edges); // number[]
+};
+</script>
+
+<template>
+  <!-- @vue-generic {number, number} -->
+  <vue-vis-network
+    :nodes="nodes"
+    :edges="edges"
+    @click="handleClick"
+  />
+</template>
+```
+
+## API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `Node[]` \| `DataSet<Node>` \| `DataView<Node>` | `[]` | Network nodes |
+| `edges` | `Edge[]` \| `DataSet<Edge>` \| `DataView<Edge>` | `[]` | Network edges |
+| `options` | `Options` | `{}` | Vis-network configuration options |
+| `events` | `EventKey[]` | All events | Array of event names to subscribe to |
+| `style` | `StyleValue` | `{}` | Inline styles for the container |
+| `class` | `any` | `undefined` | CSS class for the container |
+
+### Exposed Methods
+
+Access network instance and data via template ref:
+
+```typescript
+const networkRef = ref();
+
+networkRef.value.network;      // Network - Get vis-network instance
+networkRef.value.getNode(id);  // Node | null - Get node by ID
+networkRef.value.getEdge(id);  // Edge | null - Get edge by ID
 ```
 
 ## Events
 
-### Component Events
-By default all Vis-network events are emitted by your component. You can subscribe to a subset by passing an array in the prop `events` [Vis-network event](https://visjs.github.io/vis-network/docs/network/#Events).
+### Network Events
 
-```html
-<body>
-  <div id="app">
-    <vue-vis-network 
-      ref="network"
-      :nodes="nodes"
-      :edges="edges"
-      :options="options"
-      :events="['selectNode', 'hoverNode']"
-      @select-node="onNodeSelected"
-      @hover-node="onNodeHovered">
-    </vue-vis-network>
-  </div>
-</body>
+All [Vis-network events](https://visjs.github.io/vis-network/docs/network/#Events) are emitted by default. Subscribe to specific events using the `events` prop:
+
+```vue
+<vue-vis-network 
+  :nodes="nodes"
+  :edges="edges"
+  :options="options"
+  :events="['selectNode', 'hoverNode']"
+  @select-node="onNodeSelected"
+  @hover-node="onNodeHovered"
+/>
 ```
 
-### Data Events
+### DataSet Events
 
-When you pass an Array of data object, it is converted internally as a DataSet.
-An event with the DataSet object will be fired at mounted. It's name will be prepend with the prop name (Ex: `edges-mounted`, `nodes-mounted`). You could use it to interact with the DataSet.
+When passing an Array, it's converted to a DataSet internally. DataSet events are emitted with prefixed names:
+- **Mounted events**: `nodes-mounted`, `edges-mounted` - Fired when DataSet is created
+- **Data events**: `nodes-add`, `nodes-update`, `nodes-remove`, `edges-add`, `edges-update`, `edges-remove`
 
-All the [Visjs DataSet event](https://visjs.github.io/vis-data/data/dataset.html#Events) will be prepened the same fashion (`items-add`, `items-remove`, `items-update`). For example, pushing a new object to the `items` prop will fire a `items-add` event with the following payload:
-```javascript
+Example payload for `nodes-add`:
+
+```typescript
 {
   event: 'add',
-  properties: {
-    items: [7],
-  },
+  properties: { items: [7] },
   senderId: null,
 }
 ```
 
-### Advanced
+Learn more about [DataSet events](https://visjs.github.io/vis-data/data/dataset.html#Events).
 
-You can also manage your own data bindings by passing your own DataSet or DataView instead of an Array.
+### Event Reference
 
-``` javascript
-import { DataSet } from 'vue-vis-network';
+| Event Name | Payload Type | Description |
+|------------|--------------|-------------|
+| `click` | `NetworkClickEvent` | Fired when the user clicks |
+| `doubleClick` | `NetworkBaseEvent` | Fired when the user double clicks |
+| `oncontext` | `NetworkBaseEvent` | Fired when the user right clicks (context menu) |
+| `hold` | `NetworkBaseEvent` | Fired when the user holds (touch or mouse) |
+| `release` | `NetworkBaseEvent` | Fired when the user releases |
+| `select` | `NetworkBaseEvent` | Fired when nodes or edges are selected |
+| `selectNode` | `NetworkBaseEvent` | Fired when a node is selected |
+| `selectEdge` | `NetworkBaseEvent` | Fired when an edge is selected |
+| `deselectNode` | `NetworkDeselectEvent` | Fired when a node is deselected |
+| `deselectEdge` | `NetworkDeselectEvent` | Fired when an edge is deselected |
+| `dragStart` | `NetworkBaseEvent` | Fired when dragging starts |
+| `dragging` | `NetworkBaseEvent` | Fired while dragging |
+| `dragEnd` | `NetworkBaseEvent` | Fired when dragging ends |
+| `controlNodeDragging` | `NetworkControlNodeDraggingEvent` | Fired while dragging a control node |
+| `controlNodeDragEnd` | `NetworkControlNodeDraggingEvent` | Fired when control node dragging ends |
+| `hoverNode` | `NetworkNodeEvent` | Fired when hovering over a node |
+| `blurNode` | `NetworkNodeEvent` | Fired when leaving a node |
+| `hoverEdge` | `NetworkEdgeEvent` | Fired when hovering over an edge |
+| `blurEdge` | `NetworkEdgeEvent` | Fired when leaving an edge |
+| `zoom` | `NetworkZoomEvent` | Fired when the view is zoomed |
+| `showPopup` | `Id` | Fired when a popup is shown |
+| `hidePopup` | - | Fired when a popup is hidden |
+| `startStabilizing` | - | Fired when stabilization starts |
+| `stabilizationProgress` | `NetworkStabilizationProgressEvent` | Fired during stabilization |
+| `stabilizationIterationsDone` | - | Fired when stabilization iterations are done |
+| `stabilized` | `NetworkStabilizedEvent` | Fired when stabilization is finished |
+| `resize` | `NetworkResizeEvent` | Fired when the network is resized |
+| `initRedraw` | - | Fired before redraw |
+| `beforeDrawing` | `CanvasRenderingContext2D` | Fired before drawing on canvas |
+| `afterDrawing` | `CanvasRenderingContext2D` | Fired after drawing on canvas |
+| `animationFinished` | - | Fired when animation is finished |
+| `configChange` | `any` | Fired when configuration changes |
+| `nodes-mounted` | `DataSet<Node>` | Fired when nodes DataSet is mounted |
+| `nodes-add` | `AddEventPayload` | Fired when nodes are added |
+| `nodes-update` | `UpdateEventPayload` | Fired when nodes are updated |
+| `nodes-remove` | `RemoveEventPayload` | Fired when nodes are removed |
+| `edges-mounted` | `DataSet<Edge>` | Fired when edges DataSet is mounted |
+| `edges-add` | `AddEventPayload` | Fired when edges are added |
+| `edges-update` | `UpdateEventPayload` | Fired when edges are updated |
+| `edges-remove` | `RemoveEventPayload` | Fired when edges are removed |
 
-new Vue({
-  el: '#app',
-  data() {
-    return {
-      nodes: new DataSet([
-        {id: 1,  label: 'circle',  shape: 'circle' },
-        {id: 2,  label: 'ellipse', shape: 'ellipse'},
-        {id: 3,  label: 'database',shape: 'database'}
-      ]),
-      edges: new DataSet([
-        {from: 1, to: 2},
-        {from: 1, to: 3}
-      ]),
-      options: {
-        nodes: {
-          borderWidth: 4
-         }
-      }
-    }
-  },
-});
-```
+## Resources
 
-## Vis-network documentation
+- [Vis-Network API Documentation](https://visjs.github.io/vis-network/docs/network/)
+- [DataSet Documentation](https://visjs.github.io/vis-data/data/dataset.html)
+- [DataView Documentation](https://visjs.github.io/vis-data/data/dataview.html)
 
-For the full reference see: 
-* [Network](https://visjs.github.io/vis-network/docs/network/)
-* [DataSet](https://visjs.github.io/vis-data/data/dataset.html)
-* [DataView](https://visjs.github.io/vis-data/data/dataview.html)
+## License
+
+MIT
