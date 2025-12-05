@@ -2,8 +2,6 @@
   <h1>vue-vis-network2</h1>
   <img alt="NPM License" src="https://img.shields.io/npm/l/vue-vis-network2">
   <img alt="NPM Version" src="https://img.shields.io/npm/v/vue-vis-network2">
-
-  [CodeSandBox](https://codesandbox.io/p/devbox/vue-vis-network2-example-78hs7p?file=%2Fsrc%2FApp.vue%3A219%2C16)
 </div>
 
 Vue 3 component to integrate with [Vis-Network](https://github.com/visjs/vis-network/) views  
